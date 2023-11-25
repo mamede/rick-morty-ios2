@@ -27,26 +27,30 @@ struct ContentView: View {
                 List(viewModel.data.filter {
                     searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
                 }, id: \.name) { item in
-                    HStack {
-                        AsyncImage(url: URL(string: item.image)) { image in
-                            image.resizable()
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 70, height: 70)
-                        
-                        VStack(alignment: .leading) {
-                            Text(item.name)
-                            Text(item.status.rawValue)
-                            Text(item.species)
-                        }
-                        Spacer()
-                        Button(action: {
-                            print("Coração pressionado!")
-                        }) {
-                            Image(systemName: "heart")
-                        }
+                  NavigationLink(destination: DetailView(characterId: item.id)) {
+                    Group {
+                      HStack {
+                          AsyncImage(url: URL(string: item.image)) { image in
+                              image.resizable()
+                          } placeholder: {
+                              ProgressView()
+                          }
+                          .frame(width: 70, height: 70)
+                          
+                          VStack(alignment: .leading) {
+                              Text(item.name)
+                              Text(item.status.rawValue)
+                              Text(item.species)
+                          }
+                          Spacer()
+                          Button(action: {
+                              print("Coração pressionado!")
+                          }) {
+                              Image(systemName: "heart")
+                          }
+                      }
                     }
+                  }
                 }
                 .listStyle(PlainListStyle())
                 .onAppear {
