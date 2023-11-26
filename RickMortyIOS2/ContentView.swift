@@ -40,7 +40,7 @@ struct ContentView: View {
             Image(systemName: "person.3")
             Text("Personagens")
           }
-          RMFavoritesView()
+          RMFavoritesView(viewModel: viewModel)
             .tabItem {
                 Image(systemName: "heart")
                 Text("Favoritos")
