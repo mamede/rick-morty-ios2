@@ -1,6 +1,6 @@
 //
 //  DetailView.swift
-//  Rick morty IOS 2
+//  RickMortyIOS2
 //
 //  Created by Felipe Mamede on 25/11/23.
 //
@@ -11,7 +11,8 @@ struct DetailView: View {
     @StateObject var viewModel = CharacterDetailViewModel()
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let characterId: Int
-
+    @ObservedObject var RMviewModel: RickAndMortyViewModel
+    
     var body: some View {
         VStack {
            Button(action: {
@@ -41,10 +42,15 @@ struct DetailView: View {
                         }
                         Spacer()
                         Button(action: {
-                            print("Coração pressionado!")
-                        }) {
-                            Image(systemName: "heart")
-                        }
+                          if RMviewModel.favorites.contains(where: { $0.id == character.id }) {
+                              RMviewModel.removeFromFavorites(character: character)
+                          } else {
+                              RMviewModel.addToFavorites(character: character)
+                          }
+                            
+                      }) {
+                          Image(systemName: RMviewModel.favorites.contains(where: { $0.id == character.id }) ? "heart.fill" : "heart")
+                      }
                     }
                     Spacer()
                 }.padding()
@@ -57,12 +63,5 @@ struct DetailView: View {
         .onAppear {
             viewModel.getCharacterDetails(id: characterId)
         }
-    }
-}
-
-
-struct DetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailView(characterId: 1)
     }
 }
