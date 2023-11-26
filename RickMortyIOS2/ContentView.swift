@@ -11,65 +11,68 @@ struct ContentView: View {
     @StateObject var viewModel = RickAndMortyViewModel()
     @State private var searchText = "" // Adiciona um estado para o texto de pesquisa
     
-    var body: some View {
-        TabView {
-            VStack {
-                Text("Personagens")
-                    .font(.largeTitle)
-                    .padding()
-                
-                TextField("Buscar", text: $searchText)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-                
-                List(viewModel.data.filter {
-                    searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
-                }, id: \.name) { item in
-                  NavigationLink(destination: DetailView(characterId: item.id)) {
-                    Group {
-                      HStack {
-                          AsyncImage(url: URL(string: item.image)) { image in
-                              image.resizable()
-                          } placeholder: {
-                              ProgressView()
-                          }
-                          .frame(width: 70, height: 70)
-                          
-                          VStack(alignment: .leading) {
-                              Text(item.name)
-                              Text(item.status.rawValue)
-                              Text(item.species)
-                          }
-                          Spacer()
-                          Button(action: {
-                              print("Coração pressionado!")
-                          }) {
-                              Image(systemName: "heart")
-                          }
-                      }
+var body: some View {
+    NavigationView {
+      TabView {
+        VStack {
+          Text("Personagens")
+              .font(.largeTitle)
+              .padding()
+            
+          TextField("Buscar", text: $searchText)
+              .padding()
+              .background(Color(.systemGray6))
+              .cornerRadius(10)
+              .padding(.horizontal)
+            
+          ScrollView {
+            LazyVStack {
+              ForEach(viewModel.data.filter {
+                  searchText.isEmpty ? true : $0.name.lowercased().contains(searchText.lowercased())
+              }, id: \.name) 
+              { item in
+                NavigationLink(destination: DetailView(characterId: item.id)) {
+                  HStack {
+                    AsyncImage(url: URL(string: item.image)) { image in
+                        image.resizable()
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    .frame(width: 70, height: 70)
+                    
+                    VStack(alignment: .leading) {
+                        Text(item.name).foregroundColor(.black)
+                        Text(item.status.rawValue).foregroundColor(.black)
+                        Text(item.species).foregroundColor(.black)
+                    }
+                    Spacer()
+                    Button(action: {
+                        print("Coração pressionado!")
+                    }) {
+                        Image(systemName: "heart")
                     }
                   }
                 }
-                .listStyle(PlainListStyle())
-                .onAppear {
-                    viewModel.getData()
-                }
-            }
-            .tabItem {
-                Image(systemName: "person.3")
-                Text("Personagens")
-            }
-            
-            RMFavoritesView()
-                .tabItem {
-                    Image(systemName: "heart")
-                    Text("Favoritos")
-                }
+                }.padding(.horizontal)
+              }
+              .onAppear {
+                  viewModel.getData()
+              }
+          }.padding(.bottom)
         }
-        .background(Color.white.ignoresSafeArea())
-    }
+        .tabItem {
+          Image(systemName: "person.3")
+          Text("Personagens")
+        }
+      RMFavoritesView()
+        .tabItem {
+            Image(systemName: "heart")
+            Text("Favoritos")
+        }
+      }
+      .background(Color.white.ignoresSafeArea())
+    } 
+}
 }
 
 struct ContentView_Previews: PreviewProvider {
