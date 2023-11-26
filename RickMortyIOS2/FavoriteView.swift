@@ -22,21 +22,26 @@ struct RMFavoritesView: View {
                 Text("Favoritos")
                     .font(.largeTitle)
                     .padding()
-                ScrollView {
-                    LazyVStack {
-                        ForEach(viewModel.favorites, id: \.id) { character in
-                            CharacterRow(item: character, viewModel: viewModel)
+                if viewModel.favorites.isEmpty {
+                    Text("Você não tem nenhum favorito ainda.")
+                        .font(.title)
+                        .padding()
+                } else {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(viewModel.favorites, id: \.id) { character in
+                                CharacterRow(item: character, viewModel: viewModel)
+                            }
+                            .onDelete(perform: removeFavorites)
+                            .padding(.horizontal)
+                        }.onAppear {
+                            viewModel.getData()
                         }
-                        .onDelete(perform: removeFavorites)
-                        .padding(.horizontal)
-                    }.onAppear {
-                        viewModel.getData()
-                    }
                     }.padding(.bottom)
                 }
             }
         }
-        
+    }
         struct CharacterRow: View {
             let item: RMCharacters
             @ObservedObject var viewModel: RickAndMortyViewModel
